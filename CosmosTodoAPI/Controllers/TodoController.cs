@@ -55,10 +55,10 @@ namespace CosmosTodoAPI.Controllers
         }
 
         // GET: TodoController/Details/5
-        [HttpGet("{id}")]
-        public IQueryable<TodoItem> GetByID(int id)
+        [HttpGet("{name}")]
+        public IQueryable<TodoItem> GetByID(string name)
         {
-            return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId), new FeedOptions { MaxItemCount = 1 }).Where(i => i.Id == id);
+            return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId), new FeedOptions { MaxItemCount = 1 }).Where(i => i.Name == name);
         }
 
         // POST: api/todos/
