@@ -64,23 +64,25 @@ namespace CosmosTodoAPI.Controllers
 
         }
 
-        // GET: api/todos/5
-        [HttpGet("{name}")]
-        public IQueryable<TodoItem> Get(string name)
+
+
+        // GET: api/todos/todoName
+        [HttpGet("{id}")]
+        public IQueryable<TodoItem> Get(string id)
         {
 
 
             Console.WriteLine(">>>>>>>>>>>> Querying Document <<<<<<<<<<<<<<<<<<<<");
 
             return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId),
-                new FeedOptions { MaxItemCount = 1 }).Where((i) => i.Name == name);
+                new FeedOptions { MaxItemCount = 1 }).Where((i) => i.Id == id);
         }
+
         // Put: api/todos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] TodoItem item)
+        public async Task<IActionResult> Put(string id, [FromBody] TodoItem todo)
         {
-            await _docmentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(databaseId, collectionId, id),
-                item);
+            await _docmentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(databaseId, collectionId, id), todo);
             return Ok();
         }
 
