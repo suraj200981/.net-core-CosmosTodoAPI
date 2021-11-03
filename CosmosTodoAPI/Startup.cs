@@ -20,6 +20,7 @@ namespace CosmosTodoAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -30,6 +31,9 @@ namespace CosmosTodoAPI
             services.AddControllers();
             services.AddSingleton<IDocumentClient>(x => new DocumentClient(new Uri ( Configuration["CosmosDB:URL"] ), Configuration["CosmosDB:PrimaryKey"]));
             services.AddControllers().AddNewtonsoftJson();
+            services.AddCors(options => options.AddDefaultPolicy(builder => builder.AllowAnyOrigin()));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,9 +44,13 @@ namespace CosmosTodoAPI
                 app.UseDeveloperExceptionPage();
             }
 
+        
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 

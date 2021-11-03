@@ -1,4 +1,5 @@
 ﻿using CosmosTodoAPI.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -15,6 +16,7 @@ namespace CosmosTodoAPI.Controllers
 {
     [Route("api/todos")]
     [ApiController]
+
     public class TodoController : ControllerBase
     {
 
@@ -71,11 +73,10 @@ namespace CosmosTodoAPI.Controllers
         public IQueryable<TodoItem> Get(string id)
         {
 
-
             Console.WriteLine(">>>>>>>>>>>> Querying Document <<<<<<<<<<<<<<<<<<<<");
-
             return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId),
                 new FeedOptions { MaxItemCount = 1 }).Where((i) => i.Id == id);
+
         }
 
         // Put: api/todos/5
