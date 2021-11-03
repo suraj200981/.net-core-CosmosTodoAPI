@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
+using MySqlX.XDevAPI;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,10 +26,7 @@ namespace CosmosTodoAPI.Controllers
         //IConfiguration gives us access to the json configuration files 
         public IConfiguration _configuration { get; }
 
-
-
-
-        public TodoController(IDocumentClient documentClient, IConfiguration configuration )
+        public TodoController(IDocumentClient documentClient, IConfiguration configuration)
         {
             _docmentClient = documentClient;
             _configuration = configuration;
@@ -41,27 +39,12 @@ namespace CosmosTodoAPI.Controllers
         private async Task BuildCollection() {
 
             await _docmentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = databaseId });
-            await _docmentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(databaseId), new DocumentCollection {Id = collectionId });
+            await _docmentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(databaseId), new DocumentCollection { Id = collectionId });
 
         }
 
-             // GET: api/todos/
-             [HttpGet]
-            public IQueryable<TodoItem> GetAllTodos()
-            {
 
-            return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId), new FeedOptions { MaxItemCount = 3 });
-
-        }
-
-        // GET: TodoController/Details/5
-        [HttpGet("{name}")]
-        public IQueryable<TodoItem> GetByID(string name)
-        {
-            return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId), new FeedOptions { MaxItemCount = 1 }).Where(i => i.Name == name);
-        }
-
-        // POST: api/todos/
+        // POST: api/todos/create
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] TodoItem item)
         {
@@ -70,11 +53,43 @@ namespace CosmosTodoAPI.Controllers
             return Ok();
 
         }
-   
-        // GET: TodoController/Delete/5
-        public ActionResult Delete(int id)
+
+
+        // GET: api/todos/
+        [HttpGet]
+        public IQueryable<TodoItem> GetAllTodos()
         {
-            return null;
+
+            return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId), new FeedOptions { MaxItemCount = 3 });
+
+        }
+
+        // GET: api/todos/5
+        [HttpGet("{name}")]
+        public IQueryable<TodoItem> Get(string name)
+        {
+
+
+            Console.WriteLine(">>>>>>>>>>>> Querying Document <<<<<<<<<<<<<<<<<<<<");
+
+            return _docmentClient.CreateDocumentQuery<TodoItem>(UriFactory.CreateDocumentCollectionUri(databaseId, collectionId),
+                new FeedOptions { MaxItemCount = 1 }).Where((i) => i.Name == name);
+        }
+        // Put: api/todos/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(string id, [FromBody] TodoItem item)
+        {
+            await _docmentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(databaseId, collectionId, id),
+                item);
+            return Ok();
+        }
+
+        // POST: api/todos/
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _docmentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri(databaseId, collectionId, id));
+            return Ok();
         }
     }
 }

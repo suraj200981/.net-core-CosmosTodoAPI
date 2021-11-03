@@ -11,9 +11,16 @@ namespace CosmosTodoAPI
 {
     public class Program
     {
+
+        private const string EndpointUrl = "https://<your-account>.documents.azure.com:443/";
+        private const string AuthorizationKey = "<your-account-key>";
+        private const string DatabaseId = "FamilyDatabase";
+        private const string ContainerId = "FamilyContainer";
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

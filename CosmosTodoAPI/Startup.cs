@@ -29,6 +29,7 @@ namespace CosmosTodoAPI
         {
             services.AddControllers();
             services.AddSingleton<IDocumentClient>(x => new DocumentClient(new Uri ( Configuration["CosmosDB:URL"] ), Configuration["CosmosDB:PrimaryKey"]));
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
